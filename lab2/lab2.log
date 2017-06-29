@@ -1,0 +1,100 @@
+Locale command LC_CTYPE="en_US.UTF-8", so the command export LC_ALL='C' is used.
+This command puts the system into the standard C or POSIX locale.
+
+sort /usr/share/dict/words > words
+New file called 'words' created with the sorted dictionary.
+
+wget http://web.cs.ucla.edu/classes/spring17/cs35L/assign/assign2.html
+Gets html file.
+
+Running commands on assign2.html
+1.
+cat assign2.html | tr -c 'A-Za-z' '[\n*]'
+This gets rid of all characters other than A-Z and a-z, and replaces
+      all other characters with a newline.
+2.
+cat assign2.html | tr -cs 'A-Za-z' '[\n*]'
+Only one word per line and no extra new lines.
+man tr says the -s option is "squeeze repeats"
+
+3.
+cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | sort
+Same output as the previous command, but now it's sorted.
+
+4.
+cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | sort -u
+Only every unique word is printed.
+
+5.
+cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | sort -u | comm - words
+Three column output. Column one contains lines unique to FILE1
+, column two contains lines unique to FILE2,
+and column three contains lines common to both files.
+
+6.
+cat assign2.html | tr -cs 'A-Za-z' '[\n*]' | sort -u | comm -23 - words
+Only output is column 1 (words unique to assign2.html)
+
+-----------------------------------------------------
+
+wget http://mauimapp.com/moolelo/hwnwdseng.htm
+cp hwnwdsent.htm hwords
+
+
+Buildwords Script
+-----------------------------------------------------
+#!/bin/sh
+
+#Selects all lines with <td>...</td>\
+grep "<td>.*</td>"|\
+
+#Removes all lines that have angles
+sed 's/<[^>]*>//g'|\
+
+#Translates everything to lowercase
+tr [:upper:] [:lower:]|\
+
+#Converts okina to apostrophe
+sed "s/\`/'/g"|\
+
+#Replaces all commas with newlines
+sed 's/[,]/\n/g'|\
+
+
+#Deletes all blank newlines
+sed '/^\s*$/d'|\
+
+#Removes leading whitespaces
+sed 's/^\s*//g'|\
+
+#Removes all words without hawaiian characters
+sed "/[^p^k^'^m^n^w^l^h^a^e^i^o^u]/d"|\
+
+#Sort with only unique values
+sort -u
+
+--------------------------------------------------
+Buildwords tests
+
+First, get a file that contains a list of words in assign2.html
+
+cat assign2.html | tr -cs 'A-Za-z' '[\n*]'
+ | tr [:upper:] [:lower] | sort -u > assign2
+
+This file will be used for spell checking purposes
+
+comm -23 ./assign2 ./hwords
+This command will compare assign2.html words against hwords,
+including words unique to assign2.html
+This shows all the words misspelled in Hawaiian,
+ which is almost all words since it's an
+English document.
+
+comm -23 ./assign2 ./words
+This command comapares assign2 against words, showing words unique to assign2.
+Effectively, this is an english spell checker,
+showing words in assign2 that don't exist in
+the dictionary.
+All of the misspelled English words are either
+ hawaiian words, names, or programming terms
+like ctype, charset, cmp, and so forth.
