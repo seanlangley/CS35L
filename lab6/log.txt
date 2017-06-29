@@ -1,0 +1,51 @@
+1. 
+od -An -tf -N 40000000 < /dev/urandom | tr -s ' ' '\n' > random.txt
+-An specicifies not to write input offsets
+-tf prints the data as single point floats
+40,000,000 because a single point float takes 4 bytes, and we need 10,000,000 of them.
+tr -s ' ' '\n' replaces spaces with newlines
+
+2. sort --version
+sort (GNU coreutils) 8.4
+
+The sort version is too old, so I have to download the new verison, 8.6
+
+3. wget http://ftp.gnu.org/gnu/coreutils/coreutils-8.7.tar.gz
+tar -xvzf ./coreutils-8.6.tar.gz
+./configure --prefix=/u/ee/ugrad/seanl
+make
+make install
+
+
+-----------
+Testing Threads
+
+No Parallelism
+time -p ./coreutils-8.6/bin/sort -g random.txt > /dev/null
+real 1.49
+user 20.25
+sys 0.05
+
+1 Thread
+time -p ./coreutils-8.6/bin/sort -g --parallel=1 random.txt > /dev/null
+real 7.02
+user 7.00
+sys 0.01
+
+2 Threads
+time -p ./coreutils-8.6/bin/sort -g --parallel=2 random.txt > /dev/null
+real 3.69
+user 7.33
+sys 0.01
+
+4 Threads
+time -p ./coreutils-8.6/bin/sort -g --parallel=4 random.txt > /dev/null
+real 1.97
+user 7.76
+sys 0.01
+
+8 Threads
+time -p ./coreutils-8.6/bin/sort -g --parallel=8 random.txt > /dev/null
+real 1.39
+user 9.95
+sys 0.03
