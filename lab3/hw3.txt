@@ -1,0 +1,39 @@
+Q1
+Brady removed case_long_iso_time_style: because there's a goto statement 
+that accesses this command inside this file. This removal was not necessary
+because the goto command was also removed.
+
+Q2
+A problem could occur in non-English nations where they would want the date 
+time format in the international version, because Brady's patch doesn't allow for this.
+The pre-patched version can account for this, as it can use both international
+and American date/time formats.
+
+Q3
+The python script accesses a random script in the /usr/lib64/python2.6/random.py 
+directory. The output to an empty file like /dev/null is 
+Traceback (most recent call last):
+  File "randline.py", line 70, in <module>
+    main()
+  File "randline.py", line 64, in main
+    sys.stdout.write(generator.chooseline())
+  File "randline.py", line 34, in chooseline
+    return random.choice(self.lines)
+  File "/usr/lib64/python2.6/random.py", line 261, in choice
+    return seq[int(self.random() * len(seq))]  # raises IndexError if seq is empty
+IndexError: list index out of range
+
+The python random function is undefined if the index is zero, or if the entry file is empty.
+
+Q4
+Output from command:
+
+python3 -n5 hw3.txt
+-------------------
+  File "./randline.py", line 65
+    except IOError as (errno, strerror):
+                      ^
+SyntaxError: invalid syntax
+-------------------
+
+This happens because python3 has a different syntax for try/except statements than python2.
