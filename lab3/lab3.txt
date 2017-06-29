@@ -1,0 +1,64 @@
+1. 
+To get the file, use 
+wget ftp://ftp.gnu.org/gnu/coreutils/coreutils-7.6.tar.gz
+
+2.
+To unzip the file, use 
+tar -xzvf coreutils-7.6.tar.gz
+This returns a directory called coreutils-7.6 will all coreutility files.
+
+3. 
+mkdir ~/coreutilsInstall
+creates directory for installing coreutils
+
+4. 
+./configure --prefix=~/classes/cs35L/coreutils-7.6
+This runs the configure command which ensures there are no errors in install.
+It also sets the destination for Install when it is run
+
+5. 
+make
+This compiles the object files and the file hierarchy to be run
+
+6.
+make install
+This compiles install into the directory ~/classes/cs35L/coreutils-7.6
+
+7. 
+Going into the ~/coreutilsInstall directory and running
+./bin/ls -l
+
+after running
+export LC_ALL='en_US.UTF-8'
+results in a date format of the form 
+YYYY-MM-DD 00:00
+Running in the C locale (after running export LC_ALL='C') results in a date format
+of the form
+APR 18 11:14
+This is the error that needs to be fixed.
+
+8. 
+Pasting Brady's patch into a file patch_file after the line 
+diff --git a/src/ls.c b/src/ls.c
+
+This is the initialization of the diff file.
+
+9. 
+Running patch -p1 < patch_file
+Option -p1 because the patch file has a/src/ls.c, and one slash
+at the beginning of the file name needs to be ignored.
+This command attaches patch_file onto ./src/ls.c, which is the file that we want to modify.
+
+10. 
+Now, we run make again to recompile the source files.
+
+11. 
+Running
+./src/ls -l results in the correct date/time format
+
+
+
+
+
+
+
