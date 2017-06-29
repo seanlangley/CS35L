@@ -1,0 +1,51 @@
+2.
+Checkout a new branch 
+
+git tag
+git checkout -b 'quote' 'v3.0'
+
+3.
+Apply the patches
+ 
+patch -p1 < quote-3.0.patch.txt
+patching file src/cmp.c
+patching file src/diff.c
+patching file src/diff3.c
+patching file src/dir.c
+patching file src/sdiff.c
+patching file src/util.c
+
+4&5. 
+Learn the C-x 4 a command
+Open each file edited in emacs and use the command to add a description of what was changed
+
+6. Commit changes
+
+git commit -aF ChangeLog
+
+This applies the changes to the branch with a log in the file ChangeLog
+
+7. 
+Generating Patches
+
+git format-patch -1 --stdout > formatted-patch.txt
+
+
+8.
+Partner's name: Benjamin Domae
+git checkout -b 'partner' 'v3.0'
+Applying: 2017-06-03 Benjamin William Domae <domae@lnxsrv01.seas.ucla.edu>
+
+./bootstrap
+./configure
+make
+
+./src/diff . -
+No ` are found, so the patch works
+
+
+9. 
+make distdir
+emacs ChangeLog
+
+Inside the Change log are the appropriate edits

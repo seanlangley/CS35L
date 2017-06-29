@@ -1,0 +1,17 @@
+Description of windows:
+
+Top left:
+Has all the commit messages and a graph of the branching
+
+Top middle:
+Has the committers and the commits that were made
+
+Top right:
+Date and time of the commit
+
+Bottom left:
+Displays the parent, child, and the branches of the commit and lists
+the changes made in a diff file
+
+Bottom right:
+lists the files changed

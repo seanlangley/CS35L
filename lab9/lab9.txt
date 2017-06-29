@@ -1,0 +1,194 @@
+1. 
+mkdir gitroot
+cd gitroot/
+git clone https://git.savannah.gnu.org/git/diffutils.git
+cd ./diffutils
+
+
+2. 
+touch git-log.txt
+git log > git-log.txt
+
+
+3. 
+touch git-tags.txt
+git tag > git-tags.txt
+
+4. 
+emacs git-log.txt
+C-s maint: quote 'like this' or "like this", not `like this'
+git format-patch -1 62ca21c8c1a5aa3488589dcb191a4ef04ae9ed4f \
+--stdout > quote-patch.txt
+
+
+5. 
+git checkout -b v3.0 my3.0
+
+6. 
+patch -p1 < quote-patch.txt
+
+Following files don't exist: 
+HACKING
+diffutils.texi
+man/help2man
+
+Following files failed:
+diff.c at 876, 906, 942
+diff3.c at 433
+
+
+7. 
+git status
+
+# On branch my3.0
+# Changed but not updated:
+#   (use "git add <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#	modified:   NEWS
+#	modified:   README
+#	modified:   TODO
+#	modified:   doc/diagmeet.note
+#	modified:   ms/config.bat
+#	modified:   ms/config.site
+#	modified:   po/en.po
+#	modified:   src/analyze.c
+#	modified:   src/cmp.c
+#	modified:   src/context.c
+#	modified:   src/diff.c
+#	modified:   src/diff.h
+#	modified:   src/diff3.c
+#	modified:   src/dir.c
+#	modified:   src/ifdef.c
+#	modified:   src/io.c
+#	modified:   src/sdiff.c
+#	modified:   src/side.c
+#	modified:   src/system.h
+#	modified:   src/util.c
+#	modified:   tests/help-version
+#
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+#	NEWS.orig
+#	README-hacking.orig
+#	README-hacking.rej
+#	README.orig
+#	README.rej
+#	cfg.mk.orig
+#	cfg.mk.rej
+#	ms/config.site.orig
+#	quote-patch.txt
+#	src/cmp.c.orig
+#	src/context.c.orig
+#	src/diff.c.orig
+#	src/diff.c.rej
+#	src/diff.h.orig
+#	src/diff3.c.orig
+#	src/diff3.c.rej
+#	src/dir.c.orig
+#	src/sdiff.c.orig
+#	src/system.h.orig
+#	src/util.c.orig
+#	tests/help-version.orig
+no changes added to commit (use "git add" and/or "git commit -a")
+
+
+8. 
+Learn to use vc-diff, vc-revert, diff-apply-hunk
+
+
+9. 
+From git status, the non .c files that need to be reverted are 
+NEWS, README, TODO, doc/diagmeet.note, ms/config.bat, ms/config.site, 
+po/en.po, src/diff.h, src/system.h, tests/help-version. 
+Use emacs C-x v u to revert these files back to their original version. 
+
+Use emacs C-x v = to see changes in the .c files, and revert all changes other
+than changes to character-string constants!
+
+analyze.c: change all
+cmp.c: lines 36, 364, 377
+context.c: all lines
+diff.c: lines 40, 57, 92, 
+diff3.c: lines 35, 159, 1475
+dir.c: lines 87, 125, 234
+ifdef.c: all lines
+io.c: all lines
+sdiff.c: lines 35, 92, 747
+side.c: all lines
+util.c: lines 27, 121, 146, 190, 241, 270, 650
+
+10. 
+The .rej files didn't go through in the patch because the changes
+had different line numbers than the file. 
+diff.c and diff3.c, I had go go into the files and change 
+` to ' by hand.
+
+11. 
+git status
+# On branch my3.0
+# Changed but not updated:
+#   (use "git add <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#	modified:   cmp.c
+#	modified:   diff.c
+#	modified:   diff3.c
+#	modified:   dir.c
+#	modified:   sdiff.c
+#	modified:   util.c
+#
+# Untracked files:
+#   (use "git add <file>..." to include in what will be committed)
+#
+#	../NEWS.orig
+#	../README-hacking.orig
+#	../README-hacking.rej
+#	../README.orig
+#	../README.rej
+#	../cfg.mk.orig
+#	../cfg.mk.rej
+#	../ms/config.site.orig
+#	cmp.c.orig
+#	context.c.orig
+#	diff.c.orig
+#	diff.c.rej
+#	diff.h.orig
+#	diff3.c.orig
+#	diff3.c.rej
+#	dir.c.orig
+#	sdiff.c.orig
+#	system.h.orig
+#	util.c.orig
+#	../tests/help-version.orig
+no changes added to commit (use "git add" and/or "git commit -a")
+
+remove all the untracked files with rm
+
+12. 
+git diff > quote-3.0-patch.txt
+
+13.
+./bootstrap
+./configure
+make
+make check
+
+
+14.
+Make a new directorymkdir diffutils-3.0-patch and copy
+all files from diffutils into it
+
+git clone https://git.savannah.gnu.org/git/diffutils.git
+https://git.savannah.gnu.org/git/diffutils.git
+
+run
+diffutils/src/diff
+-pru diffutils-3.0 diffutils-3.0-patch > quote-3.0-test.txt
+
+15.
+diff quote-3.0-test.txt
+quote-3.0-patch.txt
+Files differ between the apostrophe and grave
+' and `
