@@ -1,1 +1,1 @@
-# CS35L Spring 2017
+# CS35L Software Construction Laboratory Spring 2017
