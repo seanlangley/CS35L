@@ -1,0 +1,29 @@
+#!/bin/sh                                                                                                                                                                                                   
+
+#Selects all lines with <td>...</td>\                                                                                                                                                                       
+grep "<td>.*</td>"|\
+
+#Removes all lines that have angles                                                                                                                                                                         
+sed 's/<[^>]*>//g'|\
+
+#Translates everything to lowercase                                                                                                                                                                         
+tr [:upper:] [:lower:]|\
+
+#Converts okina to apostrophe                                                                                                                                                                               
+sed "s/\`/'/g"|\
+
+#Replaces all commas with newlines                                                                                                                                                                          
+sed 's/[,]/\n/g'|\
+
+#Deletes all blank newlines                                                                                                                                                                                 
+sed '/^\s*$/d'|\
+
+#Removes leading whitespaces                                                                                                                                                                                
+sed 's/^\s*//g'|\
+
+#Removes all words without hawaiian characters                                                                                                                                                              
+sed "/[^p^k^'^m^n^w^l^h^a^e^i^o^u]/d"|\
+
+#Sort with only unique values                                                                                                                                                                               
+sort -u
+
