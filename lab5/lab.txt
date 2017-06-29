@@ -1,0 +1,39 @@
+1. 
+Write programs tr2u.c and tr2b.c. 
+tr2b utilizes getchar and putchar to do stdio. 
+tr2u utilizes read/write to do stdio.
+
+2. 
+run head --bytes=5000000 /dev/urandom > output.txt
+output.txt is a file that has 5000000 bytes.
+
+3. 
+time ./tr2b 'abc' 'def' < output.txt
+RESULTS:
+real	0m0.002s
+user	0m0.000s
+sys	0m0.001s
+
+time ./tr2u 'abc' 'def' < output.txt
+RESULTS: 
+real	0m7.177s
+user	0m0.350s
+sys	0m6.815s
+
+4. 
+strace -o strace_output ./tr2b 'AB' 'XY' < output.txt
+This prints the strace output onto the terminal.
+
+wc -l strace_output
+This counts 31 lines in strace_output, which means
+tr2b performed 31 system calls.
+
+5. 
+strace -o strace_output2 ./tr2u 'AB' 'XY' < output.txt
+wc -l strace_output2
+
+This counts 10000026 lines. Significantly more than 
+tr2b. This is because read/write performs a 
+system call on every single byte of the file, where 
+getchar/putchar only performs a system call once on the entire
+file.
