@@ -1,0 +1,19 @@
+--- ./lib/timespec.h	2017-04-27 19:52:35.835923000 -0700
++++ ./timespecnew.h	2017-04-27 20:02:28.943077000 -0700
+@@ -1,4 +1,4 @@
+-/* timespec -- System time interface
++1;95;0c/* timespec -- System time interface
+ 
+    Copyright (C) 2000, 2002, 2004, 2005 Free Software Foundation, Inc.
+ 
+@@ -45,7 +45,9 @@
+ static inline int
+ timespec_cmp (struct timespec a, struct timespec b)
+ {
+-  int diff = a.tv_sec - b.tv_sec;
++  int diff;
++  if(a.tv_sec > b.tv_sec) diff = 1;
++  else diff = 0;
+   return diff ? diff : a.tv_nsec - b.tv_nsec;
+ }
+ 

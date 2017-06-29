@@ -1,0 +1,87 @@
+1.
+ wget http://web.cs.ucla.edu/classes/spring17/cs35L/assign/coreutils-with-bug.tar.gz
+downloads the tarred core-utils-with-bug file
+
+2. 
+tar -xvzf core-utils-with-bug.tar.gz
+This unzips the file
+
+3. 
+./configure --prefix=/u/ugrad/ee/seanl/core-utils-with-bug
+
+this creates the Makefile in the same directory, so we can compile and run the ls command.
+
+4.
+ make
+
+For some reason, running make results in several erros which prevents the file from compiling.
+The error:
+
+In file included from utimecmp.c:41:
+utimens.h:2: error: conflicting types for 'futimens'
+/usr/include/sys/stat.h:374: note: previous declaration of 'futimens' was here
+make[3]: *** [utimecmp.o] Error 1
+make[3]: Leaving directory `/w/home.10/ee/ugrad/seanl/coreutils-with-bug/lib'
+make[2]: *** [all] Error 2
+make[2]: Leaving directory `/w/home.10/ee/ugrad/seanl/coreutils-with-bug/lib'
+make[1]: *** [all-recursive] Error 1
+
+5. 
+wget http://web.cs.ucla.edu/classes/spring17/cs35L/assign/coreutils.diff
+This downloads the coreutils.diff patch file
+
+6. 
+patch -p0 < coreutils.diff
+This patches the coreutils source code.
+
+7.
+make
+make install
+Make now compiles the source code. Make install creates the ./bin directory with the executables.
+Previously, there was an issue with the futimens source code. Apparently, there wasn't any interface
+to set file timestamps. This patch fixed that, and now the source code compiles.
+
+8.
+Running script from online:
+$ tmp=$(mktemp -d)
+$ cd $tmp
+$ touch -d '1918-11-11 11:00 GMT' wwi-armistice
+$ touch now
+$ sleep 1
+$ touch now1
+$ TZ=UTC0 ~/core-utils-with-bug/bin/ls -lt --full-time wwi-armistice now now1
+-rw-r--r-- 1 eggert csfac 0 1918-11-11 11:00:00.000000000 +0000 wwi-armistice
+-rw-r--r-- 1 eggert csfac 0 2017-01-25 00:11:55.528846902 +0000 now1
+-rw-r--r-- 1 eggert csfac 0 2017-01-25 00:11:54.524820127 +0000 now
+$ cd
+$ rm -fr $tmp
+
+9. 
+When running the same commands from the SEASNET home directory, we get the following output:
+-rw-r--r-- 1 seanl eeugrad 0 2054-12-17 22:58 wwi-armistice
+-rw-r--r-- 1 seanl eeugrad 0 2017-04-28 02:56 now1
+-rw-r--r-- 1 seanl eeugrad 0 2017-04-28 02:56 now
+
+For some reason, the modification year for the wwi-armistice document has increasd by 136. 
+This difference occurs because NFS Linux file systems use an unsigned 32-bit number to represent
+dates, so they can go further into the past.
+
+Local linux file systems use signed 32-bit numbers. Signed 32-bit numbers are smaller than unsigned, so they
+can't go as far into the past as the unsigned 32-bit counterpart, resulting in an overflow to 2054.
+
+9. 
+gdb ~/core-utils-with-bug/bin/ls wwi-armistice now now1
+
+After observation, it appears the files are stored in an array of structs called files.
+Set watchpoint watch *files to observe any changes to the first object in files, and 
+figure out where the files are being sorted, and according to what parameter.
+
+10.
+Using GDB and breaking at cmp_mtime
+step function s
+use s to see function timespec_cmp
+operation :
+	  int diff = a.tv_sec-b.tv_sec
+A problem arises when diff becomes too large of a negative number, causing overflow. 
+A patch can be written where a ret value diff is 0 if this value is negative, and 
+1 if this value is positive.
